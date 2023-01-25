@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.ar.core.Anchor;
 import com.google.ar.core.Config;
 import com.google.ar.sceneform.AnchorNode;
@@ -15,7 +16,7 @@ import com.google.ar.sceneform.ux.TransformableNode;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArFragment arFragment;
+    private ArFragment arFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,11 +25,17 @@ public class MainActivity extends AppCompatActivity {
 
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.arFragment);
 
-        arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
+        setOnTapActions();
+        setSessionConfigs();
 
-            if (arFragment.getArSceneView().getArFrame().getUpdatedAnchors().size() > 1) {
-                return;
-            }
+        FloatingActionButton fabSettings = findViewById(R.id.fab_settings);
+        fabSettings.setOnClickListener((view) -> {
+            PictureListDialogFragment.newInstance(30).show(getSupportFragmentManager(), "dialog");
+        });
+    }
+
+    private void setOnTapActions() {
+        arFragment.setOnTapArPlaneListener((hitResult, plane, motionEvent) -> {
 
             Anchor anchor = hitResult.createAnchor();
             ViewRenderable.builder()
@@ -40,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
                         return null;
                     });
         });
+    }
+
+    private void setSessionConfigs() {
         arFragment.setOnSessionConfigurationListener((session, config) -> {
             boolean isDepthSupported = session.isDepthModeSupported(Config.DepthMode.AUTOMATIC);
             if (isDepthSupported) {
@@ -50,8 +60,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-
-    void addModelToScene(Anchor anchor, ViewRenderable viewRenderable) {
+    private void addModelToScene(Anchor anchor, ViewRenderable viewRenderable) {
         AnchorNode anchorNode = new AnchorNode(anchor);
         TransformableNode transformableNode = new TransformableNode(arFragment.getTransformationSystem());
         transformableNode.setParent(anchorNode);
