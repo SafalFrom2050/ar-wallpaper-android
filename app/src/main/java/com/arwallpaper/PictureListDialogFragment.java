@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.arwallpaper.databinding.FragmentPictureListDialogItemBinding;
@@ -55,7 +56,7 @@ public class PictureListDialogFragment extends BottomSheetDialogFragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        final RecyclerView recyclerView = (RecyclerView) view;
+        final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         recyclerView.setAdapter(new PictureAdapter(getArguments().getInt(ARG_ITEM_COUNT)));
     }
@@ -66,24 +67,46 @@ public class PictureListDialogFragment extends BottomSheetDialogFragment {
         binding = null;
     }
 
-    private class ViewHolder extends RecyclerView.ViewHolder {
+    private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ShapeableImageView image;
+        ImageView iconCheck;
 
         ViewHolder(FragmentPictureListDialogItemBinding binding) {
             super(binding.getRoot());
             image = binding.image;
+            iconCheck = binding.iconCheck;
+            binding.getRoot().setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View view) {
+
+            PictureAdapter adapter = (PictureAdapter) getBindingAdapter();
+
+            int prevPos = adapter.selectedPosition;
+            int currPos = getBindingAdapterPosition();
+
+            adapter.setSelectedPosition(currPos);
+            adapter.notifyItemChanged(prevPos);
+            adapter.notifyItemChanged(currPos);
+
+
+        }
     }
 
     private class PictureAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         private final int mItemCount;
+        int selectedPosition = 0;
 
 
         PictureAdapter(int itemCount) {
             mItemCount = itemCount;
+        }
+
+        public void setSelectedPosition(int selectedPosition) {
+            this.selectedPosition = selectedPosition;
         }
 
         @NonNull
@@ -97,6 +120,11 @@ public class PictureListDialogFragment extends BottomSheetDialogFragment {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             holder.image.setImageResource(R.drawable.wallpaper);
+            if (position == selectedPosition) {
+                holder.iconCheck.setVisibility(View.VISIBLE);
+            }else{
+                holder.iconCheck.setVisibility(View.GONE);
+            }
         }
 
         @Override
