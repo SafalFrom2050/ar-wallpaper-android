@@ -1,25 +1,20 @@
 package com.arwallpaper;
 
-import android.content.res.Resources;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.NonNull;
-
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-
-import androidx.core.content.res.ResourcesCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.arwallpaper.databinding.FragmentPictureListDialogItemBinding;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.arwallpaper.databinding.FragmentPictureListDialogBinding;
+import com.arwallpaper.databinding.FragmentPictureListDialogItemBinding;
+import com.bumptech.glide.Glide;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.imageview.ShapeableImageView;
 
 /**
@@ -35,11 +30,9 @@ public class PictureListDialogFragment extends BottomSheetDialogFragment {
     private static final String ARG_ITEM_COUNT = "item_count";
     private FragmentPictureListDialogBinding binding;
 
-    // TODO: Customize parameters
-    public static PictureListDialogFragment newInstance(int itemCount) {
+    public static PictureListDialogFragment newInstance() {
         final PictureListDialogFragment fragment = new PictureListDialogFragment();
         final Bundle args = new Bundle();
-        args.putInt(ARG_ITEM_COUNT, itemCount);
         fragment.setArguments(args);
         return fragment;
     }
@@ -58,7 +51,7 @@ public class PictureListDialogFragment extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         final RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.list);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        recyclerView.setAdapter(new PictureAdapter(getArguments().getInt(ARG_ITEM_COUNT)));
+        recyclerView.setAdapter(new PictureAdapter());
     }
 
     @Override
@@ -88,22 +81,16 @@ public class PictureListDialogFragment extends BottomSheetDialogFragment {
             int currPos = getBindingAdapterPosition();
 
             adapter.setSelectedPosition(currPos);
+            WallpaperStore.selectedIndex = currPos;
             adapter.notifyItemChanged(prevPos);
             adapter.notifyItemChanged(currPos);
-
-
         }
     }
 
     private class PictureAdapter extends RecyclerView.Adapter<ViewHolder> {
 
-        private final int mItemCount;
+        private final int mItemCount = WallpaperStore.wallpapers.length;
         int selectedPosition = 0;
-
-
-        PictureAdapter(int itemCount) {
-            mItemCount = itemCount;
-        }
 
         public void setSelectedPosition(int selectedPosition) {
             this.selectedPosition = selectedPosition;
@@ -119,7 +106,8 @@ public class PictureListDialogFragment extends BottomSheetDialogFragment {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            holder.image.setImageResource(R.drawable.wallpaper);
+            Glide.with(requireContext()).load("file:///android_asset/" + WallpaperStore.wallpapers[position]).into(holder.image);
+
             if (position == selectedPosition) {
                 holder.iconCheck.setVisibility(View.VISIBLE);
             }else{
