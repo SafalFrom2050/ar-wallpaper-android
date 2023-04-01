@@ -6,6 +6,18 @@
 
 [**AR Wallpaper**](https://drive.google.com/file/d/1N1nXlcxia5SQYBhCLBKOJWn4R0X0klw7/view?usp=sharing "‌")
 
+## Limitations
+
+Requires devices to have depth API support for the best results.
+
+The Depth API is only supported on devices with the processing power to support depth, and it must be enabled manually in ARCore, as described in [Enable Depth](https://developers.google.com/ar/develop/unity-arf/depth/developer-guide#enable-depth "‌").
+
+Some devices may also provide a hardware depth sensor, such as a time-of-flight (ToF) sensor. Refer to the [ARCore supported devices](https://developers.google.com/ar/devices "‌") page for an up-to-date list of devices that support the Depth API and a list of devices that have a supported hardware depth sensor, such as a ToF sensor.
+
+_Reference:_
+
+[https://developers.google.com/ar/develop/depth](https://developers.google.com/ar/develop/depth "smartCard-block")
+
 
 ## About ARCore
 ARCore uses three key capabilities to integrate virtual content with the real world as seen through your phone's camera:
